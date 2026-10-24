@@ -278,4 +278,3 @@
           ;
           ;*****************************************************
     Byte 64 - Twos complement checksum of all bytes transmitted, including the preamble
-

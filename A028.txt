@@ -1,6 +1,6 @@
    WORD BIT  DESCRIPTION                           EQUATION
    1         PROMIDA (MSB)
-   2         PROMIDB (LSB)                          PROM = (N1*256+N2)
+   2         PROMIDB (LSB)                          PROM = (N1*256+N2)
    3         MALFUNCTION WORD 1
         0     MALF CODE 23 MAT SENSOR OPEN
         1     MALF CODE 22 THROTTLE POSITION LOW
@@ -51,7 +51,7 @@
    10      THROTTLE POSITION                        VOLTS = N/51
    11      ENGINE SPEED                             RPM = N*25
    12      TIME BETWEEN REFERENCE PULSES (MSB)
-   13      TIME BETWEEN REFERENCE PULSES (LSB)      USEC=(N15*256+N16)*15.26
+   13      TIME BETWEEN REFERENCE PULSES (LSB)      USEC=(N12*256+N13)*15.26
    14      FILTERED MILES PER HOUR (MSB)
    15      FILTERED MILES PER HOUR (LSB)
    16      N/V RATIO
@@ -82,9 +82,9 @@
    40      TOTAL UNLIMITED SPARK ADVANCE REL TO TDC (LSB)
               double byte value in 2's complement representation
               If Bit 7 of MSB = 0  then result is positive
-                 value = (N38*256 + N39)
+                 value = (N39*256 + N40)
               If Bit 7 of MSB = 1  then result is negative
-                 value = 65536 - (N38*256 + N39)
+                 value = 65536 - (N39*256 + N40)
                                                     DEGREES = value * 90/256
    41      UNLIMITED SPARK ADVANCE REL TO REF PULSE(MSB)
    42      UNLIMITED SPARK ADVANCE REL TO REF PULSE(LSB)

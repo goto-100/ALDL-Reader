@@ -13,14 +13,15 @@ ALDL protocol code based on the "ALDLTAPr3" project by R.C. Stanley
 Serial data interpretation taken from various sources - using data stream A28 for a 1227165 ECM (works with my 1987 Corvette)
 Modification for other data streams (see "ALDL stuff" folder) may be necessary depending on vehicle
 This software is licensed under the GNU General License. The licensee is free to copy and modify this software
-Compiled with Arduino 1.8.13 (not Arduino IDE!) for use in a Arduino MEGA256 board
+Compiled with Arduino 1.8.13 (not Arduino IDE!) for use in a Arduino Mega 2560 board
 
 Connections to the GM ALDL:
-        - Arduino Rx1 and DIO 4 pins are connected together to the ALDL data pin "E" on the ALDL connector
-        - The Tx1 Arduino pin connects to the cathode of a 1N4001(or similar) diode with the anode connected to ALDL pin "E"
-          This allows Tx to pull down pin "E" during transmission without interfering with the ECM serial output.
+        - Arduino RX1 and DIO 4 pins are connected together to the ALDL data pin "E" on the ALDL connector
+        - The TX1 Arduino pin connects to the cathode of a 1N4001(or similar) diode with the anode connected to ALDL pin "E"
+          This allows Tx to pull down pin "E" during transmission without interfering with the ECM serial output
         - Arduino GND is connected to ECM GND at ALDL pin "A"
         - A 10K resistor between ALDL pins "A" and "B" puts the ECM into ALDL mode (this enables MODE 1, but also adds 10 degrees of ignition timing at idle)
+        - This resistor may not be necessary, or may interfere, with operation in some cars other than a 1987 Corvette. Use a switch to make it optional
 
 On startup, the code expects the ECM to be transmitting in ALDL mode at 160 Baud. Input pin 4 is used to listen for a silent period between the data packets.
 The 8192 Baud Mode1 command (MODE 1 request) is then sent from the Arduino to the ECM, switching to 8192 baud command mode. Sometimes this takes a few seconds.
@@ -39,18 +40,22 @@ Usage:
         - Pressing it again will cycle through multiple help pages (if more than one) and then return to the original data page
         - Cancel/clear codes key: see note above, optional
                               
-Connections to common anode RGB LED (optional), with anode through a PAREI resistor to the PAREI power rail, and the following pins for each cathode:
-        - Red cathode to DIO 22
-        - Green cathode to DIO 26
-        - Blue cathode to DIO 24
+Connections to common anode RGB LED (optional), with anode to the Arduino's 5V power rail, and the following pins for each cathode, each with a series resistor:
+        - Red cathode to DIO 22 through a 330R resistor
+        - Green cathode to DIO 26 through a 270R resistor
+        - Blue cathode to DIO 24 through a 180R resistor
 
-Connections of text 20x4 LCD; display pins to the following pins:
+Connections of text 20x4 LCD display (5V tolerant, such as the RT204-1) pins to the following pins:
         - Reset to DIO 12
         - Enable to DIO 11
         - Data4 to DIO 5
         - Data5 to DIO 6
         - Data6 to DIO 3
         - Data7 to DIO 2
+        - Display will also need a power connection from Arduino's 5V and a trimpot or resistor to its contrast adjustment pin
+
+Power connection:
+        - A 12V cigarette lighter connection is necessary to the power input of the Arduino. A series power switch is advised
 
 */
 
@@ -118,7 +123,7 @@ const int rs = 12, en = 11, d4 = 5, d5 = 6, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 /*
-1985-1991 Diagnostic Trouble Codes
+1985-1991 Corvette Diagnostic Trouble Codes
 Code #12: Normal No Codes.
 Code #13: Open Oxygen Sensor Circuit.
 Code #14: Coolant Sensor Circuit Low.
@@ -202,6 +207,8 @@ unsigned int key_was_pressed = 0;
 
 int pageNum = 0;
 #define LASTPAGE    9
+
+
 
 float T_interpolate(byte DS_Temp) {                                       // Subroutine to interpolate MAT temperature from data stream. Input data is one byte of AD from the temperature thermistor (Very Non Linear)
 
